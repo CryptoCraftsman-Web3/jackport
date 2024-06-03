@@ -1,33 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=VT323&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  background-color: #080808;
+  /* overflow: hidden; */
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+* {
+  font-family: "Pixelify Sans";
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #ffffff50;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0px #ffffff;
+  width: 4px;
+}
+
+.wallet-adapter-button {
+  width: 100% !important;
+}
+.wallet-adapter-dropdown {
+  width: 216px !important;
+}
+.playground .wallet-adapter-button.wallet-adapter-button-trigger {
+  /* className="bg-[#7E49F0] my-8 rounded-2xl text-[20px] text-white-100 font-bold text-center py-4" */
+  border-radius: 16px !important;
+  text-align: center !important;
+  background: #7e49f0 !important;
+  margin-top: 32px !important;
+  height: 62px !important;
+  margin-bottom: 32px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.wallet-adapter-button.wallet-adapter-button-trigger {
+  white-space: nowrap !important;
+}
+@keyframes rotateAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
+
+.highcharts-container {
+  /* width: 300px !important; */
+}
+/* .highcharts-series-group {
+  animation: rotateAnimation 5s infinite linear;
+  transform-origin: center center;
+} */
