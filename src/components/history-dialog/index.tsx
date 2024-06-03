@@ -84,7 +84,7 @@ const HistoryDialog = ({ open, handleClose }: Props) => {
                 Prize Pool
               </TableCell>
               <TableCell align="right" sx={{ color: "grey" }}>
-                Winner's Entries
+                Winner Entries
               </TableCell>
               <TableCell align="right" sx={{ color: "grey" }}>
                 Win
