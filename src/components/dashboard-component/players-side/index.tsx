@@ -24,7 +24,7 @@ const PlayerSide = ({ players, sumPots, hovered, winner }: Props) => {
     <Root>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
         <Grid item>
-          <Typography variant="subtitle1">1 Players</Typography>
+          <Typography variant="subtitle1">{players.length} Players</Typography>
         </Grid>
         <Grid item>
           <Grid container>

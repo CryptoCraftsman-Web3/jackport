@@ -242,7 +242,7 @@ export default function Waiting() {
             let interval: any;
             let temp = 2;
             let increase = true;
-            let maxTemp = Math.random() * 100;
+            let maxTemp = 70;
             let minTemp = 0;
 
             function rotate() {
@@ -259,9 +259,8 @@ export default function Waiting() {
                   temp = 0;
                   clearTimeout(timeout);
                   clearInterval(interval);
-                  console.log("finaluser===", user);
                   //@ts-ignore
-                  chart.user = user;
+                  // chart.user = user;
                   setWin(user);
                   return;
                 }
@@ -321,7 +320,7 @@ export default function Waiting() {
               textAlign: "center",
             };
             //@ts-ignore
-            console.log("userwin===", win);
+            // console.log("userwin===", win);
             //@ts-ignore
             if (!chart.customText) {
               //@ts-ignore
@@ -574,7 +573,7 @@ export default function Waiting() {
         >
           <Toolbar>
             {/* <div className="flex items-center"> */}
-            <div className="text-2xl font-bold text-white">DEGENPOT{win}</div>
+            <div className="text-2xl font-bold text-white">DEGENPOT</div>
             {/* </div> */}
             <Box flexGrow={1} />
             <div className="flex items-center space-x-4">

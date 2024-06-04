@@ -11,7 +11,7 @@ type Props = {
 };
 
 const UserListItem = ({ item, sumPots, hovered, winner }: Props) => {
-  console.log("win==", winner);
+  // console.log("win==", winner);
   return (
     <div
       className="flex items-center justify-between mb-2 p-3 rounded-2xl relative"
