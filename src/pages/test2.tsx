@@ -40,6 +40,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 if (typeof Highcharts === "object") {
   require("highcharts/highcharts-more")(Highcharts);
   require("highcharts/modules/solid-gauge")(Highcharts);
+  // HighchartsExporting(Highcharts);
 }
 const drawerWidth = 300;
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -101,6 +102,8 @@ export default function Waiting() {
   const [open, setOpen] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [start, setStart] = useState<boolean>(false);
+  const [hover, setHover] = useState<number>(NaN);
 
   const sumPots = useMemo(() => {
     if (gameData && gameData && gameData.players) {
@@ -170,17 +173,69 @@ export default function Waiting() {
   // @ts-ignore
   const chartOptions: Highcharts.Options = useMemo(() => {
     return {
+      responsive: {
+        rules: [
+          {
+            condition: {
+              minWidth: 800,
+            },
+            chartOptions: {
+              legend: {
+                enabled: false,
+              },
+              // plotOptions: {
+              //   pie: {
+              //     dataLabels: {
+              //       enabled: true,
+              //     },
+
+              //   },
+              // },
+            },
+          },
+        ],
+      },
       chart: {
         type: "pie",
         backgroundColor: "transparent",
         events: {
+          load: function () {
+            const chart = this;
+            console.log("chart===", chart, chart.plotHeight);
+            let angle = 0;
+            function drawTriangle() {
+              const centerX = chart.plotWidth / 2 + chart.plotLeft;
+              const centerY = chart.plotHeight / 10;
+              const size = 12;
+
+              //@ts-ignore
+              chart.renderer
+                //@ts-ignore
+                .path([
+                  "M",
+                  centerX,
+                  centerY - size,
+                  "L",
+                  centerX - size,
+                  centerY - size * 2,
+                  "L",
+                  centerX + size,
+                  centerY - size * 2,
+                  "Z",
+                ])
+                .attr({
+                  fill: "#ffcc00",
+                  stroke: "#ffcc00",
+                  "stroke-width": 2,
+                  zIndex: 1000,
+                })
+                .add();
+            }
+
+            drawTriangle();
+          },
           render: function () {
             const chart = this;
-
-            //@ts-ignore
-            //   chart.renderer.boxWrapper.element.querySelector('.highcharts-series-group').setAttribute(
-            //     'transform', 'rotate(45, ' + chart.plotWidth / 2 + ', ' + chart.plotHeight / 2 + ')'
-            // );
             const text = `${sumPots} SOL`;
             const countdownText = `Time left: --s`;
             const style = {
@@ -188,19 +243,15 @@ export default function Waiting() {
               fontSize: "20px",
               textAlign: "center",
             };
-
-            // @ts-ignore
+            //@ts-ignore
             if (!chart.customText) {
-              // @ts-ignore
-
+              //@ts-ignore
               chart.customText = chart.renderer
                 .text(
                   text,
-                  // @ts-ignore
-
+                  //@ts-ignore
                   chart.chartWidth / 2,
-                  // @ts-ignore
-
+                  //@ts-ignore
                   chart.plotHeight / 2 + chart.plotTop
                 )
                 .css(style)
@@ -210,28 +261,25 @@ export default function Waiting() {
                 })
                 .add();
             } else {
-              // @ts-ignore
-
+              //@ts-ignore
               chart.customText.attr({
                 text: text,
-                // @ts-ignore
-
+                //@ts-ignore
                 x: chart.chartWidth / 2,
-                // @ts-ignore
-
+                //@ts-ignore
                 y: chart.plotHeight / 2 + chart.plotTop,
               });
             }
+
             //@ts-ignore
             if (!chart.countdownText) {
               //@ts-ignore
               chart.countdownText = chart.renderer
-
                 .text(
                   countdownText,
-
+                  //@ts-ignore
                   chart.chartWidth / 2,
-
+                  //@ts-ignore
                   chart.plotHeight / 2 + chart.plotTop + 30
                 )
                 .css(style)
@@ -242,45 +290,76 @@ export default function Waiting() {
                 .add();
             } else {
               //@ts-ignore
-
               chart.countdownText.attr({
                 text: countdownText,
                 //@ts-ignore
-
                 x: chart.chartWidth / 2,
                 //@ts-ignore
-
                 y: chart.plotHeight / 2 + chart.plotTop + 30,
               });
             }
+
+            let angle = 0;
+            let temp = 2;
+            let increase = true;
+            let maxTemp = 60;
+            let minTemp = 0;
+            function rotate() {
+              angle = (angle + temp) % 360;
+              console.log("angle==", angle, temp);
+              if (increase) {
+                temp += 1;
+                if (temp >= 60) {
+                  increase = false;
+                }
+              } else {
+                temp -= 1;
+                if (temp <= minTemp) {
+                  temp = 0;
+                }
+              }
+              if (chart.options) {
+                chart.update(
+                  {
+                    plotOptions: {
+                      pie: {
+                        startAngle: angle,
+                        // animation: {
+                        //   duration: 50,
+                        // },
+                      },
+                    },
+                  },
+                  true,
+                  false,
+                  false
+                );
+              }
+              setTimeout(rotate, 50);
+            }
+            setInterval(() => rotate(), 5000);
           },
           redraw: function () {
             const chart = this;
-            // @ts-ignore
 
+            //@ts-ignore
             if (chart.customText) {
-              // @ts-ignore
-
+              //@ts-ignore
               chart.customText.attr({
-                // @ts-ignore
-
+                //@ts-ignore
                 x: chart.chartWidth / 2,
-                // @ts-ignore
-
+                //@ts-ignore
                 y: chart.plotHeight / 2 + chart.plotTop,
               });
             }
-            // @ts-ignore
 
+            //@ts-ignore
             if (chart.countdownText) {
-              // @ts-ignore
-
+              //@ts-ignore
               chart.countdownText.attr({
-                // @ts-ignore
-
+                //@ts-ignore
                 x: chart.chartWidth / 2,
-                // @ts-ignore
-
+                //@ts-ignore
                 y: chart.plotHeight / 2 + chart.plotTop + 30,
               });
             }
@@ -295,22 +374,23 @@ export default function Waiting() {
       },
       pane: {
         center: ["50%", "50%"],
-        size: "100%",
         startAngle: 0,
         endAngle: 360,
+        size: "100%",
         background: {
           backgroundColor: "#080808",
           innerRadius: "100%",
           outerRadius: "100%",
+          borderWidth: 10,
           shape: "arc",
         },
       },
       tooltip: {
-        // enabled: true,
+        enabled: true,
       },
       yAxis: {
         min: 0,
-        max: 60, // Example total time
+        max: 60,
         stops: [[1.0, "#FAF9F6"]],
         lineWidth: 0,
         tickWidth: 0,
@@ -327,6 +407,24 @@ export default function Waiting() {
           },
           center: ["50%", "50%"],
           size: "100%",
+          point: {
+            events: {
+              mouseOver: function (e) {
+                console.log("e==", e);
+                // Custom logic for hover event
+                //@ts-ignore
+                // console.log(`Hovering over: ${this.id}`);
+                //@ts-ignore
+                setHover(this.id);
+              },
+              mouseOut: function () {
+                // Custom logic for hover out event
+                //@ts-ignore
+                setHover(NaN);
+                // console.log(`No longer hovering over: ${this.id}`);
+              },
+            },
+          },
         },
         solidgauge: {
           dataLabels: {
@@ -336,7 +434,6 @@ export default function Waiting() {
           rounded: false,
         },
       },
-      // colors: ["#FF204E", "#F72798", "#F57D1F", "#EBF400"],
       colors: gameData?.players
         ? gameData?.players.map((item) => item.color)
         : ["#FF204E", "#F72798", "#F57D1F", "#EBF400"],
@@ -348,6 +445,7 @@ export default function Waiting() {
             ? gameData?.players.map((item) => ({
                 name: item.player,
                 y: item.amount,
+                id: item.id,
               }))
             : [
                 { name: "Player 1", y: 0.5 },
@@ -355,12 +453,6 @@ export default function Waiting() {
                 { name: "Player 3", y: 0.75 },
                 { name: "Player 4", y: 3 },
               ],
-          // data: [
-          //   { name: "Player 1", y: 0.5 },
-          //   { name: "Player 2", y: 1 },
-          //   { name: "Player 3", y: 0.75 },
-          //   { name: "Player 4", y: 3 },
-          // ],
           innerSize: "65%",
         },
         {
@@ -372,7 +464,8 @@ export default function Waiting() {
         },
       ],
     };
-  }, [gameData?.players]);
+  }, [gameData?.players, start]);
+
   const gaugeChartOptions = {
     chart: {
       type: "solidgauge",
@@ -490,6 +583,7 @@ export default function Waiting() {
               <Hidden lgDown>
                 <Grid item md={3}>
                   <PlayerSide
+                    hovered={hover}
                     players={gameData ? gameData.players : []}
                     sumPots={sumPots}
                   />
@@ -515,6 +609,12 @@ export default function Waiting() {
                         </Grid>
                         <Grid item>
                           <Grid container columnGap={1}>
+                            <div
+                              className="border p-1 border-gray-500 rounded-lg cursor-pointer flex hover:bg-gray-500"
+                              onClick={() => setStart(true)}
+                            >
+                              <ClockIcon className="mr-2" /> start
+                            </div>
                             <div
                               className="border p-1 border-gray-500 rounded-lg cursor-pointer flex hover:bg-gray-500"
                               onClick={() => setOpen(true)}
