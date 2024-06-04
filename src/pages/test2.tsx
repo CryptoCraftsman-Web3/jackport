@@ -233,11 +233,59 @@ export default function Waiting() {
             }
 
             drawTriangle();
+
+            // let angle = 0;
+            let timeout: any;
+            let interval: any;
+            let temp = 2;
+            let increase = true;
+            let maxTemp = Math.random() * 100;
+            let minTemp = 0;
+            function rotate() {
+              angle = (angle + temp) % 360;
+              // temp += 1;
+
+              console.log("angle==", angle, temp, increase);
+              if (increase) {
+                temp += 1;
+                if (temp >= maxTemp) {
+                  increase = false;
+                }
+              } else {
+                temp -= 1;
+                if (temp <= minTemp) {
+                  temp = 0;
+                  clearTimeout(timeout);
+                  clearInterval(interval);
+                }
+              }
+              if (chart.options) {
+                chart.update(
+                  {
+                    plotOptions: {
+                      pie: {
+                        startAngle: angle,
+                        // endAngle
+                        animation: {
+                          duration: 50,
+                        },
+                      },
+                    },
+                  },
+                  true,
+                  false,
+                  false
+                );
+              }
+              // temp += 1;
+              timeout = setTimeout(rotate, 50);
+            }
+            interval = setInterval(rotate, 5000);
           },
           render: function () {
             const chart = this;
             const text = `${sumPots} SOL`;
-            const countdownText = `Time left: --s`;
+            const countdownText = `Time left: 5s`;
             const style = {
               color: "#FFFFFF",
               fontSize: "20px",
@@ -298,46 +346,6 @@ export default function Waiting() {
                 y: chart.plotHeight / 2 + chart.plotTop + 30,
               });
             }
-
-            let angle = 0;
-            let temp = 2;
-            let increase = true;
-            let maxTemp = 60;
-            let minTemp = 0;
-            function rotate() {
-              angle = (angle + temp) % 360;
-              console.log("angle==", angle, temp);
-              if (increase) {
-                temp += 1;
-                if (temp >= 60) {
-                  increase = false;
-                }
-              } else {
-                temp -= 1;
-                if (temp <= minTemp) {
-                  temp = 0;
-                }
-              }
-              if (chart.options) {
-                chart.update(
-                  {
-                    plotOptions: {
-                      pie: {
-                        startAngle: angle,
-                        // animation: {
-                        //   duration: 50,
-                        // },
-                      },
-                    },
-                  },
-                  true,
-                  false,
-                  false
-                );
-              }
-              setTimeout(rotate, 50);
-            }
-            setInterval(() => rotate(), 5000);
           },
           redraw: function () {
             const chart = this;
@@ -609,12 +617,12 @@ export default function Waiting() {
                         </Grid>
                         <Grid item>
                           <Grid container columnGap={1}>
-                            <div
+                            {/* <div
                               className="border p-1 border-gray-500 rounded-lg cursor-pointer flex hover:bg-gray-500"
                               onClick={() => setStart(true)}
                             >
                               <ClockIcon className="mr-2" /> start
-                            </div>
+                            </div> */}
                             <div
                               className="border p-1 border-gray-500 rounded-lg cursor-pointer flex hover:bg-gray-500"
                               onClick={() => setOpen(true)}
@@ -644,6 +652,7 @@ export default function Waiting() {
                   <Hidden lgUp>
                     <Grid item>
                       <PlayerSide
+                        hovered={hover}
                         players={gameData ? gameData.players : []}
                         sumPots={sumPots}
                       />

@@ -4,15 +4,19 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { generateFromString } from "generate-avatar";
 
 type Props = {
-    item:Player
-    sumPots:number
+  item: Player;
+  sumPots: number;
+  hovered: number;
 };
 
-const UserListItem = ({item,sumPots}: Props) => {
+const UserListItem = ({ item, sumPots, hovered }: Props) => {
   return (
     <div
       className="flex items-center justify-between mb-2 p-2 rounded-2xl"
-      style={{ border: `1px solid ${item.color}` }}
+      style={{
+        border: `1px solid ${item.color}`,
+        opacity: !Number.isNaN(hovered) ? (hovered === item.id ? 1 : 0.2) : 1,
+      }}
     >
       <img
         src={`data:image/svg+xml;utf8,${generateFromString(item.player)}`}

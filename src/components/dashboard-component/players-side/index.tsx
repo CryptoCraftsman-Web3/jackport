@@ -6,6 +6,7 @@ import React from "react";
 type Props = {
   players: Player[];
   sumPots: number;
+  hovered: number;
 };
 
 const Root = styled(Paper)(({ theme }) => ({
@@ -16,7 +17,7 @@ const Root = styled(Paper)(({ theme }) => ({
   // display:"flex",
 }));
 
-const PlayerSide = ({ players, sumPots }: Props) => {
+const PlayerSide = ({ players, sumPots, hovered }: Props) => {
   return (
     <Root>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
@@ -37,7 +38,12 @@ const PlayerSide = ({ players, sumPots }: Props) => {
       ) : (
         <div className="mt-4">
           {players?.map((item: Player, key: number) => (
-            <UserListItem item={item} sumPots={sumPots} key={key} />
+            <UserListItem
+              hovered={hovered}
+              item={item}
+              sumPots={sumPots}
+              key={key}
+            />
           ))}
         </div>
       )}
