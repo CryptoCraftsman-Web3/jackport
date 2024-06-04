@@ -104,6 +104,7 @@ export default function Waiting() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [start, setStart] = useState<boolean>(false);
   const [hover, setHover] = useState<number>(NaN);
+  const [win, setWin] = useState<number>(NaN);
 
   const sumPots = useMemo(() => {
     if (gameData && gameData && gameData.players) {
@@ -144,6 +145,7 @@ export default function Waiting() {
   };
 
   const winPercent = useMemo(() => {
+    console.log("data=", gameData?.players);
     if (
       gameData &&
       gameData &&
@@ -172,6 +174,7 @@ export default function Waiting() {
   }, [gameData?.players, wallet.publicKey, wallet.connected]);
   // @ts-ignore
   const chartOptions: Highcharts.Options = useMemo(() => {
+    let user = 0;
     return {
       responsive: {
         rules: [
@@ -201,8 +204,9 @@ export default function Waiting() {
         events: {
           load: function () {
             const chart = this;
-            console.log("chart===", chart, chart.plotHeight);
             let angle = 0;
+            // let user = 0;
+
             function drawTriangle() {
               const centerX = chart.plotWidth / 2 + chart.plotLeft;
               const centerY = chart.plotHeight / 10;
@@ -224,8 +228,8 @@ export default function Waiting() {
                   "Z",
                 ])
                 .attr({
-                  fill: "#ffcc00",
-                  stroke: "#ffcc00",
+                  fill: "#ffffff",
+                  stroke: "#ffffff",
                   "stroke-width": 2,
                   zIndex: 1000,
                 })
@@ -234,18 +238,16 @@ export default function Waiting() {
 
             drawTriangle();
 
-            // let angle = 0;
             let timeout: any;
             let interval: any;
             let temp = 2;
             let increase = true;
             let maxTemp = Math.random() * 100;
             let minTemp = 0;
+
             function rotate() {
               angle = (angle + temp) % 360;
-              // temp += 1;
 
-              console.log("angle==", angle, temp, increase);
               if (increase) {
                 temp += 1;
                 if (temp >= maxTemp) {
@@ -257,15 +259,20 @@ export default function Waiting() {
                   temp = 0;
                   clearTimeout(timeout);
                   clearInterval(interval);
+                  console.log("finaluser===", user);
+                  //@ts-ignore
+                  chart.user = user;
+                  setWin(user);
+                  return;
                 }
               }
+
               if (chart.options) {
                 chart.update(
                   {
                     plotOptions: {
                       pie: {
                         startAngle: angle,
-                        // endAngle
                         animation: {
                           duration: 50,
                         },
@@ -276,21 +283,45 @@ export default function Waiting() {
                   false,
                   false
                 );
+
+                const data = chart.series[0].data;
+                let currentAngle = 0;
+                // console.log("log==", angle);
+
+                for (let i = 0; i < data.length; i++) {
+                  const point = data[data.length - 1 - i];
+
+                  //@ts-ignore
+                  const pointAngle = (point.percentage / 100) * 360;
+                  if (
+                    angle >= currentAngle &&
+                    angle < currentAngle + pointAngle
+                  ) {
+                    //@ts-ignore
+                    user = point.id;
+                    // console.log("Triangle is pointing at user:", user);
+                    break;
+                  }
+                  currentAngle += pointAngle;
+                }
               }
-              // temp += 1;
+
               timeout = setTimeout(rotate, 50);
             }
+
             interval = setInterval(rotate, 5000);
           },
           render: function () {
             const chart = this;
-            const text = `${sumPots} SOL`;
+            const text = `<p style="display:flex;"><img src="./Solana_logo.png" width="26" height="20" style="margin-right:10px;"/> ${sumPots} SOL</p>`;
             const countdownText = `Time left: 5s`;
             const style = {
               color: "#FFFFFF",
               fontSize: "20px",
               textAlign: "center",
             };
+            //@ts-ignore
+            console.log("userwin===", win);
             //@ts-ignore
             if (!chart.customText) {
               //@ts-ignore
@@ -300,7 +331,8 @@ export default function Waiting() {
                   //@ts-ignore
                   chart.chartWidth / 2,
                   //@ts-ignore
-                  chart.plotHeight / 2 + chart.plotTop
+                  chart.plotHeight / 2 + chart.plotTop,
+                  true
                 )
                 .css(style)
                 .attr({
@@ -418,10 +450,10 @@ export default function Waiting() {
           point: {
             events: {
               mouseOver: function (e) {
-                console.log("e==", e);
+                // console.log("e==", e);
                 // Custom logic for hover event
                 //@ts-ignore
-                // console.log(`Hovering over: ${this.id}`);
+                console.log(`Hovering over: ${this.name}`);
                 //@ts-ignore
                 setHover(this.id);
               },
@@ -472,7 +504,7 @@ export default function Waiting() {
         },
       ],
     };
-  }, [gameData?.players, start]);
+  }, [gameData?.players, start, win]);
 
   const gaugeChartOptions = {
     chart: {
@@ -542,7 +574,7 @@ export default function Waiting() {
         >
           <Toolbar>
             {/* <div className="flex items-center"> */}
-            <div className="text-2xl font-bold text-white">DEGENPOT</div>
+            <div className="text-2xl font-bold text-white">DEGENPOT{win}</div>
             {/* </div> */}
             <Box flexGrow={1} />
             <div className="flex items-center space-x-4">
@@ -591,6 +623,7 @@ export default function Waiting() {
               <Hidden lgDown>
                 <Grid item md={3}>
                   <PlayerSide
+                    winner={win}
                     hovered={hover}
                     players={gameData ? gameData.players : []}
                     sumPots={sumPots}
@@ -652,6 +685,7 @@ export default function Waiting() {
                   <Hidden lgUp>
                     <Grid item>
                       <PlayerSide
+                        winner={win}
                         hovered={hover}
                         players={gameData ? gameData.players : []}
                         sumPots={sumPots}

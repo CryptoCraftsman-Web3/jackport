@@ -165,4 +165,54 @@ export function generateRandomPlayersArray(size: number): Player[] {
     playersArray.push(getRandomPlayer(i));
   }
   return playersArray;
+  // return [
+  //   {
+  //     id: 0,
+  //     player: "zYpJ9r",
+  //     amount: 2288213235,
+  //     color: "#ffe53d",
+  //   },
+  //   {
+  //     id: 1,
+  //     player: "nHucSI",
+  //     amount: 3861950959,
+  //     color: "#b7dd6e",
+  //   },
+  //   {
+  //     id: 2,
+  //     player: "Ffrat0",
+  //     amount: 9677392058,
+  //     color: "#c3bfff",
+  //   },
+  //   {
+  //     id: 3,
+  //     player: "1itcRA",
+  //     amount: 3283689637,
+  //     color: "#d62243",
+  //   },
+  //   {
+  //     id: 4,
+  //     player: "BZUnKT",
+  //     amount: 3978079313,
+  //     color: "#9958f4",
+  //   },
+  //   {
+  //     id: 5,
+  //     player: "Pw07qJ",
+  //     amount: 6059734509,
+  //     color: "#e0161d",
+  //   },
+  //   {
+  //     id: 6,
+  //     player: "9atHUZ",
+  //     amount: 3470430391,
+  //     color: "#ff49d4",
+  //   },
+  //   {
+  //     id: 7,
+  //     player: "qbKQBN",
+  //     amount: 2101832815,
+  //     color: "#8a92d8",
+  //   },
+  // ];
 }
