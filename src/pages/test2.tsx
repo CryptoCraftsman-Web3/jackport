@@ -426,6 +426,27 @@ export default function Waiting() {
       },
       tooltip: {
         enabled: true,
+        useHTML: true,
+        padding: 0,
+        borderRadius: 12,
+        formatter: function (tooltip) {
+          console.log("this==", this);
+          let img = generateFromString(this.key as string);
+          let amount = ((this.y as number) / LAMPORTS_PER_SOL).toLocaleString();
+          console.log("img==", img);
+          return `<div style="border:2px solid ${this.color}; background-color:#080808; color:white; padding:10px; border-radius:12px;display:flex; flex-direction:column;">
+           ${this.key}
+          <div> Amount: ${amount} SOL</div>
+          </div>`;
+        },
+
+        // formatter: function (tooltip) {
+        //   let index = tooltip.chart.index;
+        //   console.log("index==", tooltip);
+        //   let color = tooltip.chart.options.colors[index];
+        //   let user = tooltip.chart.series[0].data[index];
+        //   return `<div style="background-color:${color}"> hello</div>`;
+        // },
       },
       yAxis: {
         min: 0,
