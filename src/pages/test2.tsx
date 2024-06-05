@@ -145,7 +145,6 @@ export default function Waiting() {
   };
 
   const winPercent = useMemo(() => {
-    console.log("data=", gameData?.players);
     if (
       gameData &&
       gameData &&
@@ -245,6 +244,49 @@ export default function Waiting() {
             let maxTemp = 70;
             let minTemp = 0;
 
+            // let out_angle = 72;
+            // let timerTimeout: any;
+            // function timerFunc() {
+            //   if (chart.options) {
+            //     chart.update({
+            //       pane: {
+            //         center: ["50%", "50%"],
+            //         startAngle: out_angle,
+            //         endAngle: 360,
+            //         size: "100%",
+            //         background: {
+            //           innerRadius: "100%",
+            //           outerRadius: "100%",
+            //           borderWidth: 10,
+            //           shape: "arc",
+            //         },
+            //       },
+            //     });
+            //     out_angle += 18;
+            //     if (out_angle === 360) {
+            //       clearTimeout(timerTimeout);
+            //       chart.update({
+            //         pane: {
+            //           center: ["50%", "50%"],
+            //           startAngle: 0,
+            //           endAngle: 360,
+            //           size: "100%",
+
+            //           background: {
+            //             innerRadius: "100%",
+            //             outerRadius: "100%",
+            //             borderWidth: 10,
+            //             shape: "arc",
+            //           },
+            //         },
+            //       });
+            //       return;
+            //     }
+            //   }
+            //   timerTimeout = setTimeout(timerFunc, 1000);
+            // }
+            // timerFunc();
+
             function rotate() {
               angle = (angle + temp) % 360;
 
@@ -307,8 +349,7 @@ export default function Waiting() {
 
               timeout = setTimeout(rotate, 50);
             }
-
-            interval = setInterval(rotate, 5000);
+            interval = setInterval(rotate, 15000);
           },
           render: function () {
             const chart = this;
@@ -420,7 +461,7 @@ export default function Waiting() {
           backgroundColor: "#080808",
           innerRadius: "100%",
           outerRadius: "100%",
-          borderWidth: 10,
+          borderWidth: 6,
           shape: "arc",
         },
       },
@@ -430,24 +471,24 @@ export default function Waiting() {
         padding: 0,
         borderRadius: 12,
         formatter: function (tooltip) {
-          console.log("this==", this);
-          let img = generateFromString(this.key as string);
+          let imgUrl = generateFromString(this.key as string);
+          let svg = imgUrl
+            .replace(/width="300"/g, 'width="30"')
+            .replace(/height="300"/g, 'height="30"')
+            .replace(/viewBox="0 0 300 300"/g, 'viewBox="0 0 30 30"');
+          // Assuming this returns the URL of the image
           let amount = ((this.y as number) / LAMPORTS_PER_SOL).toLocaleString();
-          console.log("img==", img);
-          return `<div style="border:2px solid ${this.color}; background-color:#080808; color:white; padding:10px; border-radius:12px;display:flex; flex-direction:column;">
-           ${this.key}
-          <div> Amount: ${amount} SOL</div>
-          </div>`;
+          return `<div style="border:2px solid ${this.color}; background-color:#080808; color:white; padding:10px; border-radius:12px;display:flex;align-items:center;">
+         <div style="width: 30px; height: 30px;">${svg}</div>
+         <div style="display:flex; flex-direction:column; margin-left:10px;">
+         <div>${this.key}</div>
+         <div>Amount: ${amount} SOL</div>
+         </div>
+   
+    </div>`;
         },
-
-        // formatter: function (tooltip) {
-        //   let index = tooltip.chart.index;
-        //   console.log("index==", tooltip);
-        //   let color = tooltip.chart.options.colors[index];
-        //   let user = tooltip.chart.series[0].data[index];
-        //   return `<div style="background-color:${color}"> hello</div>`;
-        // },
       },
+
       yAxis: {
         min: 0,
         max: 60,
@@ -755,6 +796,7 @@ export default function Waiting() {
               <Hidden mdDown>
                 <Grid item md={3} sm={3}>
                   <RoundInfoSide
+                    playersCount={gameData ? gameData.players.length : 0}
                     sumPots={sumPots}
                     handleBet={handleBet}
                     handleBetAmount={handleBetAmount}
