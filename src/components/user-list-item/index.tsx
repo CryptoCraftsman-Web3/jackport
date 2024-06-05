@@ -8,13 +8,16 @@ type Props = {
   sumPots: number;
   hovered: number;
   winner: number;
+  onHover: (id: number) => void;
 };
 
-const UserListItem = ({ item, sumPots, hovered, winner }: Props) => {
+const UserListItem = ({ item, sumPots, hovered, winner, onHover }: Props) => {
   // console.log("win==", winner);
   return (
     <div
-      className="flex items-center justify-between mb-2 p-3 rounded-2xl relative"
+      onMouseEnter={() => onHover(item.id)}
+      onMouseLeave={() => onHover(NaN)}
+      className="flex items-center justify-between mb-2 p-3 rounded-2xl relative cursor-pointer hover:scale-105 duration-300"
       style={{
         border: `1px solid ${item.color}`,
         opacity: !Number.isNaN(hovered)
@@ -50,7 +53,7 @@ const UserListItem = ({ item, sumPots, hovered, winner }: Props) => {
           {(item.amount / LAMPORTS_PER_SOL).toLocaleString()} SOL
         </div>
       </div>
-      <div className="text-right mr-5">
+      <div className="text-right mr-6">
         <div className="text-sm">
           {Math.round(
             (((item.amount / LAMPORTS_PER_SOL) * 100) / sumPots) * 100
@@ -59,7 +62,7 @@ const UserListItem = ({ item, sumPots, hovered, winner }: Props) => {
         </div>{" "}
       </div>
       <div
-        className="absolute right-0 w-5 h-[100%] rounded-e-2xl"
+        className="absolute right-2 w-6 h-6 rounded-full"
         style={{ backgroundColor: item.color }}
       />
     </div>

@@ -105,6 +105,7 @@ export default function Waiting() {
   const [start, setStart] = useState<boolean>(false);
   const [hover, setHover] = useState<number>(NaN);
   const [win, setWin] = useState<number>(NaN);
+  const [hovered, setHovered] = useState<number>(NaN);
 
   const sumPots = useMemo(() => {
     if (gameData && gameData && gameData.players) {
@@ -143,6 +144,8 @@ export default function Waiting() {
   const handleEndGame = () => {
     setIsWonWindow(false);
   };
+
+  console.log("gameData=========", gameData);
 
   const winPercent = useMemo(() => {
     if (
@@ -243,49 +246,6 @@ export default function Waiting() {
             let increase = true;
             let maxTemp = 70;
             let minTemp = 0;
-
-            // let out_angle = 72;
-            // let timerTimeout: any;
-            // function timerFunc() {
-            //   if (chart.options) {
-            //     chart.update({
-            //       pane: {
-            //         center: ["50%", "50%"],
-            //         startAngle: out_angle,
-            //         endAngle: 360,
-            //         size: "100%",
-            //         background: {
-            //           innerRadius: "100%",
-            //           outerRadius: "100%",
-            //           borderWidth: 10,
-            //           shape: "arc",
-            //         },
-            //       },
-            //     });
-            //     out_angle += 18;
-            //     if (out_angle === 360) {
-            //       clearTimeout(timerTimeout);
-            //       chart.update({
-            //         pane: {
-            //           center: ["50%", "50%"],
-            //           startAngle: 0,
-            //           endAngle: 360,
-            //           size: "100%",
-
-            //           background: {
-            //             innerRadius: "100%",
-            //             outerRadius: "100%",
-            //             borderWidth: 10,
-            //             shape: "arc",
-            //           },
-            //         },
-            //       });
-            //       return;
-            //     }
-            //   }
-            //   timerTimeout = setTimeout(timerFunc, 1000);
-            // }
-            // timerFunc();
 
             function rotate() {
               angle = (angle + temp) % 360;
@@ -526,6 +486,12 @@ export default function Waiting() {
               },
             },
           },
+
+          // states: {
+          //   inactive: {
+          //     opacity: 1,
+          //   },
+          // },
         },
         solidgauge: {
           dataLabels: {
@@ -547,6 +513,11 @@ export default function Waiting() {
                 name: item.player,
                 y: item.amount,
                 id: item.id,
+                opacity: Number.isNaN(hovered)
+                  ? 1
+                  : hovered === item.id
+                  ? 1
+                  : 0.2,
               }))
             : [
                 { name: "Player 1", y: 0.5 },
@@ -565,8 +536,7 @@ export default function Waiting() {
         },
       ],
     };
-  }, [gameData?.players, start, win]);
-
+  }, [gameData?.players, start, win, hovered]);
   const gaugeChartOptions = {
     chart: {
       type: "solidgauge",
@@ -684,6 +654,7 @@ export default function Waiting() {
               <Hidden lgDown>
                 <Grid item md={3}>
                   <PlayerSide
+                    onHover={(id) => setHovered(id)}
                     winner={win}
                     hovered={hover}
                     players={gameData ? gameData.players : []}
@@ -726,9 +697,9 @@ export default function Waiting() {
                             <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
                               <ChevronLeftIcon />
                             </div>
-                            <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
+                            {/* <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
                               <ChevronRightIcon />
-                            </div>
+                            </div> */}
                           </Grid>
                         </Grid>
                       </Grid>
@@ -746,6 +717,7 @@ export default function Waiting() {
                   <Hidden lgUp>
                     <Grid item>
                       <PlayerSide
+                        onHover={(id) => setHovered(id)}
                         winner={win}
                         hovered={hover}
                         players={gameData ? gameData.players : []}
@@ -768,9 +740,9 @@ export default function Waiting() {
                             <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
                               <ChevronLeftIcon />
                             </div>
-                            <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
+                            {/* <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
                               <ChevronRightIcon />
-                            </div>
+                            </div> */}
                           </Box>
                         </Grid>
                       </Grid>

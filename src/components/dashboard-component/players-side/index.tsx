@@ -8,6 +8,7 @@ type Props = {
   sumPots: number;
   hovered: number;
   winner: number;
+  onHover: (id: number) => void;
 };
 
 const Root = styled(Paper)(({ theme }) => ({
@@ -19,7 +20,7 @@ const Root = styled(Paper)(({ theme }) => ({
   // display:"flex",
 }));
 
-const PlayerSide = ({ players, sumPots, hovered, winner }: Props) => {
+const PlayerSide = ({ players, sumPots, hovered, winner, onHover }: Props) => {
   return (
     <Root>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
@@ -41,6 +42,7 @@ const PlayerSide = ({ players, sumPots, hovered, winner }: Props) => {
         <div className="mt-4">
           {players?.map((item: Player, key: number) => (
             <UserListItem
+              onHover={(id) => onHover(id)}
               winner={winner}
               hovered={hovered}
               item={item}

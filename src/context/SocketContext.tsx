@@ -40,7 +40,7 @@ interface Context {
 const context = createContext<Context>({});
 
 export const useSocket = () => useContext(context);
-
+var interval: any;
 const SocketProvider = (props: { children: any }) => {
   const [socket, setSocket] = useState<SocketType>();
   const [started, setStated] = useState(false);
@@ -88,13 +88,32 @@ const SocketProvider = (props: { children: any }) => {
   };
   //offline MODE
 
-  const initializeUserData = () => {
+  const addPlayers = (players: Player[]) => {
+    clearInterval(interval);
+    console.log("players==", players);
+    players?.push(generateRandomPlayersArray(1)[0]);
     setGameData({
-      players: generateRandomPlayersArray(Math.floor(Math.random() * 10 + 2)),
+      players: players as Player[],
       endTimestamp: 1200,
       pda: "rektlker",
       gameStarted: false,
     });
+  };
+
+  const initializeUserData = () => {
+    let players = generateRandomPlayersArray(
+      Math.floor(Math.random() * 10 + 2)
+    );
+    setGameData({
+      players: players,
+      endTimestamp: 1200,
+      pda: "rektlker",
+      gameStarted: false,
+    });
+    // interval = setInterval(() => addPlayers(players), 7000);
+
+    // clearInterval(interval);
+
     // try {
     //     const response = await fetch(`${API_URL}getRecentGame`);
     //     const data = await response.json();
