@@ -107,6 +107,15 @@ export default function Waiting() {
   const [hover, setHover] = useState<number>(NaN);
   const [win, setWin] = useState<number>(NaN);
   const [hovered, setHovered] = useState<number>(NaN);
+  const [time, setTime] = useState<number>(15);
+
+  let timer = setTimeout(() => {
+    setTime(time - 1);
+  }, 1000);
+
+  if (time === 0) {
+    clearTimeout(timer);
+  }
 
   const sumPots = useMemo(() => {
     if (gameData && gameData && gameData.players) {
@@ -206,8 +215,31 @@ export default function Waiting() {
           load: function () {
             const chart = this;
             let angle = 0;
+            let tick_angle = 0;
             // let user = 0;
 
+            // if (chart.options) {
+            //   chart.update(
+            //     {
+            //       pane: {
+            //         // center: ["50%", "50%"],
+            //         startAngle: (15 - time) * 24,
+            //         endAngle: 360,
+            //         size: "100%",
+            //         // background: {
+            //         //   backgroundColor: "#080808",
+            //         //   innerRadius: "100%",
+            //         //   outerRadius: "100%",
+            //         //   borderWidth: 6,
+            //         //   shape: "arc",
+            //         // },
+            //       },
+            //     },
+            //     true,
+            //     false,
+            //     false
+            //   );
+            // }
             function drawTriangle() {
               const centerX = chart.plotWidth / 2 + chart.plotLeft;
               const centerY = chart.plotHeight / 10;
@@ -319,9 +351,22 @@ export default function Waiting() {
             const chart = this;
             let text;
             let countdownText;
+            let timer: any;
             if (Number.isNaN(win)) {
               text = `<p style="display:flex;"><img src="./Solana_logo.png" width="26" height="20" style="margin-right:10px;"/> ${sumPots} SOL</p>`;
-              countdownText = `Time left: 5s`;
+              //@ts-ignore
+              // function down() {
+              //   console.log("time===", time);
+              countdownText = `Time left: ${time}s`;
+              //   if (time === 0) {
+              //     clearTimeout(timer);
+              //     return;
+              //   }
+              //   time -= 1;
+
+              //   timer = setTimeout(down, 1000);
+              // }
+              // down();
             } else {
               let winPercent =
                 Math.round(
@@ -432,16 +477,17 @@ export default function Waiting() {
         enabled: false,
       },
       pane: {
-        center: ["50%", "50%"],
+        // center: ["50%", "50%"],
         startAngle: 0,
         endAngle: 360,
         size: "100%",
+        animation: 10,
         background: {
           backgroundColor: "#080808",
           innerRadius: "100%",
           outerRadius: "100%",
           borderWidth: 6,
-          shape: "arc",
+          shape: "solid",
         },
       },
       tooltip: {
@@ -545,6 +591,7 @@ export default function Waiting() {
                 { name: "Player 4", y: 3 },
               ],
           innerSize: "65%",
+          animation: 100,
         },
         {
           type: "solidgauge",
@@ -555,7 +602,7 @@ export default function Waiting() {
         },
       ],
     };
-  }, [gameData?.players, start, win, hovered]);
+  }, [gameData?.players, start, win, hovered, time]);
   const gaugeChartOptions = {
     chart: {
       type: "solidgauge",
