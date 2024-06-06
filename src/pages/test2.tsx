@@ -145,8 +145,6 @@ export default function Waiting() {
     setIsWonWindow(false);
   };
 
-  console.log("gameData=========", gameData);
-
   const winPercent = useMemo(() => {
     if (
       gameData &&
@@ -256,15 +254,20 @@ export default function Waiting() {
                   increase = false;
                 }
               } else {
-                temp -= 1;
-                if (temp <= minTemp) {
-                  temp = 0;
-                  clearTimeout(timeout);
-                  clearInterval(interval);
-                  //@ts-ignore
-                  // chart.user = user;
-                  setWin(user);
-                  return;
+                if (temp <= minTemp + 20) {
+                  temp -= 0.2;
+
+                  if (temp <= minTemp) {
+                    temp = 0;
+                    clearTimeout(timeout);
+                    clearInterval(interval);
+                    //@ts-ignore
+                    // chart.user = user;
+                    setWin(user);
+                    return;
+                  }
+                } else {
+                  temp -= 1;
                 }
               }
 
@@ -651,7 +654,7 @@ export default function Waiting() {
               // mx={4}
               mt={4}
             >
-              <Hidden lgDown>
+              {/* <Hidden lgDown>
                 <Grid item md={3}>
                   <PlayerSide
                     onHover={(id) => setHovered(id)}
@@ -661,8 +664,8 @@ export default function Waiting() {
                     sumPots={sumPots}
                   />
                 </Grid>
-              </Hidden>
-              <Grid item lg={6} sm={12} xs={12}>
+              </Hidden> */}
+              <Grid item lg={9} sm={12} xs={12}>
                 <Grid
                   container
                   flexDirection={"column"}
@@ -714,18 +717,18 @@ export default function Waiting() {
                       {/* </Grid> */}
                     </Paper>
                   </Grid>
-                  <Hidden lgUp>
-                    <Grid item>
-                      <PlayerSide
-                        onHover={(id) => setHovered(id)}
-                        winner={win}
-                        hovered={hover}
-                        players={gameData ? gameData.players : []}
-                        sumPots={sumPots}
-                      />
-                    </Grid>
-                  </Hidden>
-                  <Grid item height={"fit-content"}>
+                  {/* <Hidden lgUp> */}
+                  <Grid item>
+                    <PlayerSide
+                      onHover={(id) => setHovered(id)}
+                      winner={win}
+                      hovered={hover}
+                      players={gameData ? gameData.players : []}
+                      sumPots={sumPots}
+                    />
+                  </Grid>
+                  {/* </Hidden> */}
+                  {/* <Grid item height={"fit-content"}>
                     <Paper className="h-full rounded-xl px-2 py-1">
                       <Grid
                         container
@@ -740,9 +743,6 @@ export default function Waiting() {
                             <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
                               <ChevronLeftIcon />
                             </div>
-                            {/* <div className="border p-1 border-gray-500 cursor-pointer rounded-lg hover:bg-gray-500">
-                              <ChevronRightIcon />
-                            </div> */}
                           </Box>
                         </Grid>
                       </Grid>
@@ -762,7 +762,7 @@ export default function Waiting() {
                         </div>
                       </Grid>
                     </Paper>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
               <Hidden mdDown>

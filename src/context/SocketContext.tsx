@@ -90,7 +90,6 @@ const SocketProvider = (props: { children: any }) => {
 
   const addPlayers = (players: Player[]) => {
     clearInterval(interval);
-    console.log("players==", players);
     players?.push(generateRandomPlayersArray(1)[0]);
     setGameData({
       players: players as Player[],
