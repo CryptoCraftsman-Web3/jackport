@@ -54,7 +54,8 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  marginRight: -drawerWidth,
+
+  marginRight: !isMobile ? -drawerWidth : 0,
   ...(!isMobile &&
     open && {
       transition: theme.transitions.create("margin", {
@@ -101,7 +102,7 @@ export default function Waiting() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [open, setOpen] = useState<boolean>(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [start, setStart] = useState<boolean>(false);
   const [hover, setHover] = useState<number>(NaN);
   const [win, setWin] = useState<number>(NaN);
@@ -316,12 +317,27 @@ export default function Waiting() {
           },
           render: function () {
             const chart = this;
-            const text = `<p style="display:flex;"><img src="./Solana_logo.png" width="26" height="20" style="margin-right:10px;"/> ${sumPots} SOL</p>`;
-            const countdownText = `Time left: 5s`;
+            let text;
+            let countdownText;
+            if (Number.isNaN(win)) {
+              text = `<p style="display:flex;"><img src="./Solana_logo.png" width="26" height="20" style="margin-right:10px;"/> ${sumPots} SOL</p>`;
+              countdownText = `Time left: 5s`;
+            } else {
+              let winPercent =
+                Math.round(
+                  (sumPots * 10) /
+                    //@ts-ignore
+                    (this.series[0].data[win].y / LAMPORTS_PER_SOL)
+                ) / 10;
+              text = `<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;position:absolute;top:-60px;right:-90px;">
+              <img src="./win.png" width="100"/>
+              <p style="display:flex;font-size:16px"> ${this.series[0].data[win].name} is a ${winPercent}X winner </p></div>`;
+            }
             const style = {
               color: "#FFFFFF",
               fontSize: "20px",
               textAlign: "center",
+              // top: "120px !important",
             };
             //@ts-ignore
             // console.log("userwin===", win);
@@ -643,7 +659,12 @@ export default function Waiting() {
           </Toolbar>
         </AppBar>
         <Main open={isChatOpen} isMobile={isMobile}>
-          <Grid container justifyContent={"center"} height={"90vh"} px={6}>
+          <Grid
+            container
+            justifyContent={"center"}
+            height={"90vh"}
+            px={{ xs: 2, sm: 4, md: 6 }}
+          >
             <Grid
               container
               maxWidth={"lg"}
@@ -665,7 +686,7 @@ export default function Waiting() {
                   />
                 </Grid>
               </Hidden> */}
-              <Grid item lg={9} sm={12} xs={12}>
+              <Grid item md={9} sm={12} xs={12}>
                 <Grid
                   container
                   flexDirection={"column"}
@@ -718,7 +739,7 @@ export default function Waiting() {
                     </Paper>
                   </Grid>
                   {/* <Hidden lgUp> */}
-                  <Grid item>
+                  <Grid item mb={isMobile ? 40 : 0}>
                     <PlayerSide
                       onHover={(id) => setHovered(id)}
                       winner={win}
@@ -781,6 +802,7 @@ export default function Waiting() {
             </Grid>
           </Grid>
         </Main>
+
         {/* <div className="bg-[#080808] flex flex-col items-center h-[90vh]  text-white"> */}
         {/* </div> */}
       </div>
@@ -811,6 +833,26 @@ export default function Waiting() {
         // </div> */}
       {/* )} */}
       <HistoryDialog open={open} handleClose={() => setOpen(false)} />
+      {isMobile && (
+        // <AppBar
+        //   isMobile={isMobile}
+        //   position="fixed"
+        //   sx={{ top: "auto", bottom: 0, borderRadius: "30px 30px 0px 0px" }}
+        // >
+        //   <Toolbar>
+        <RoundInfoSide
+          isMobile={isMobile}
+          playersCount={gameData ? gameData.players.length : 0}
+          sumPots={sumPots}
+          handleBet={handleBet}
+          handleBetAmount={handleBetAmount}
+          isBetLoading={isBetLoading}
+          winPercent={winPercent}
+          betAmount={betAmount}
+        />
+        //   </Toolbar>
+        // </AppBar>
+      )}
     </div>
   );
 }
