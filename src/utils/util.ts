@@ -4,6 +4,7 @@ import { Player } from "./type";
 // import randomString from 'randomized-string'
 const randomString = require("randomized-string");
 import randomColor from "randomcolor";
+import { Keypair } from "@solana/web3.js";
 
 export const useSolanaPrice = () => {
   const { isLoading, isError, data, error } = useQuery({
@@ -148,7 +149,7 @@ const colors = [
 ];
 
 function getRandomPlayer(number: number): Player {
-  const players = randomString.generate(6);
+  const players = Keypair.generate().publicKey.toBase58();
   const colors = randomColor();
 
   return {

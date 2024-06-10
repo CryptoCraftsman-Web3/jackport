@@ -7,7 +7,7 @@ type Props = {
   players: Player[];
   sumPots: number;
   hovered: number;
-  winner: number;
+  winner: string;
   onHover: (id: number) => void;
 };
 

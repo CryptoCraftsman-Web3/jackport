@@ -2,16 +2,18 @@ import React from "react";
 import { Player } from "../../utils/type";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { generateFromString } from "generate-avatar";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 type Props = {
   item: Player;
   sumPots: number;
   hovered: number;
-  winner: number;
+  winner: string;
   onHover: (id: number) => void;
 };
 
 const UserListItem = ({ item, sumPots, hovered, winner, onHover }: Props) => {
+  const wallet = useWallet();
   // console.log("win==", winner);
   return (
     <div
@@ -24,13 +26,13 @@ const UserListItem = ({ item, sumPots, hovered, winner, onHover }: Props) => {
           ? hovered === item.id
             ? 1
             : 0.2
-          : !Number.isNaN(winner)
-          ? winner === item.id
+          : winner
+          ? winner === item.player
             ? 1
             : 0.2
           : 1,
-        background: !Number.isNaN(winner)
-          ? winner === item.id
+        background: winner
+          ? winner === item.player
             ? "linear-gradient(111deg, rgba(253,202,45,0.3477766106442577) 0%, rgba(175,195,34,0.0844712885154062) 85%)"
             : "none"
           : "none",
@@ -43,9 +45,10 @@ const UserListItem = ({ item, sumPots, hovered, winner, onHover }: Props) => {
 
       <div className="flex-1 ml-2">
         <div className="text-sm">
-          {item.player.slice(0, 3)}...
-          {item.player.slice(-3)}
-          {winner === item.id && (
+          {wallet.publicKey?.toBase58() === item.player
+            ? "You"
+            : item.player.slice(0, 3) + "..." + item.player.slice(-3)}
+          {winner === item.player && (
             <img className="inline-block ml-3" src="/crown.png" width={16} />
           )}
         </div>

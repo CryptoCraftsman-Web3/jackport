@@ -9,6 +9,7 @@ type Props = {
   winPercent: number | undefined;
   handleBetAmount: (e: number) => void;
   betAmount: number;
+  entry: number;
   handleBet: () => void;
   isBetLoading: boolean;
   playersCount: number;
@@ -52,6 +53,7 @@ const RoundInfoSide = ({
   isBetLoading,
   playersCount,
   isMobile,
+  entry,
 }: Props) => {
   const wallet = useWallet();
   const [time, setTime] = useState<number>(15);
@@ -91,11 +93,13 @@ const RoundInfoSide = ({
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm">Your Entries</div>
-                <div className="text-sm">-</div>
+                <div className="text-sm">{entry} sol</div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm">Your Win Chance</div>
-                <div className="text-sm">{winPercent}</div>
+                <div className="text-sm">
+                  {winPercent ? Math.round(winPercent * 10000) / 100 : 0}
+                </div>
               </div>
             </div>
             <div className="text-white p-4 rounded-md">
@@ -116,13 +120,28 @@ const RoundInfoSide = ({
                     </div>
 
                     <div className="flex gap-1 mb-4">
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(0.1);
+                        }}
+                      >
                         0.1 SOL
                       </div>
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(0.5);
+                        }}
+                      >
                         0.5 SOL
                       </div>
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(5);
+                        }}
+                      >
                         5 SOL
                       </div>
                     </div>
@@ -167,11 +186,14 @@ const RoundInfoSide = ({
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm">Your Entries</div>
-                <div className="text-sm">-</div>
+                <div className="text-sm">{entry} sol</div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm">Your Win Chance</div>
-                <div className="text-sm">{winPercent}</div>
+                <div className="text-sm">
+                  {" "}
+                  {winPercent ? Math.round(winPercent * 10000) / 100 : 0} %
+                </div>
               </div>
             </div>
 
@@ -193,13 +215,28 @@ const RoundInfoSide = ({
                     </div>
 
                     <div className="flex gap-1 mb-4">
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(0.1);
+                        }}
+                      >
                         0.1 SOL
                       </div>
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(0.5);
+                        }}
+                      >
                         0.5 SOL
                       </div>
-                      <div className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer">
+                      <div
+                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
+                        onClick={() => {
+                          handleBetAmount(5);
+                        }}
+                      >
                         5 SOL
                       </div>
                     </div>

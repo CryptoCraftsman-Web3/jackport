@@ -88,11 +88,17 @@ const SocketProvider = (props: { children: any }) => {
   };
   //offline MODE
 
-  const addPlayers = (players: Player[]) => {
-    clearInterval(interval);
-    players?.push(generateRandomPlayersArray(1)[0]);
+  const addPlayers = (amount: number) => {
+    let tempPlayers = gameData?.players;
+    // clearInterval(interval);
+    tempPlayers?.push({
+      player: "You",
+      amount,
+      color: "red",
+      id: tempPlayers?.length,
+    });
     setGameData({
-      players: players as Player[],
+      players: tempPlayers as Player[],
       endTimestamp: 1200,
       pda: "rektlker",
       gameStarted: false,
@@ -101,7 +107,8 @@ const SocketProvider = (props: { children: any }) => {
 
   const initializeUserData = () => {
     let players = generateRandomPlayersArray(
-      Math.floor(Math.random() * 10 + 2)
+      // Math.floor(Math.random() * 10 + 2)
+      3
     );
     setGameData({
       players: players,

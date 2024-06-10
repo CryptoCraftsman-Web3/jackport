@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSolanaPrice } from "../utils/util";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { enterGame, playGame } from "../context/solana/transaction";
@@ -13,7 +13,7 @@ import MobileChat from "../components/Chat/MobileChat";
 import { base58ToGradient } from "../utils/util";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
-import Highcharts from "highcharts";
+import Highcharts, { color } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { generateFromString } from "generate-avatar";
 import { Player } from "../utils/type";
@@ -105,9 +105,16 @@ export default function Waiting() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [start, setStart] = useState<boolean>(false);
   const [hover, setHover] = useState<number>(NaN);
-  const [win, setWin] = useState<number>(NaN);
+  const [win, setWin] = useState<string>("");
   const [hovered, setHovered] = useState<number>(NaN);
   const [time, setTime] = useState<number>(15);
+  const [roundData, setRoundData] = useState<{
+    players: Player[];
+    endTimestamp: number;
+    pda: string;
+    gameStarted: boolean;
+  }>();
+  const [entry, setEntry] = useState<number>(0);
 
   let timer = setTimeout(() => {
     setTime(time - 1);
@@ -116,10 +123,19 @@ export default function Waiting() {
   if (time === 0) {
     clearTimeout(timer);
   }
+  useEffect(() => {
+    if (time === 0) {
+      setIsBetLoading(true);
+    }
+  }, [time]);
+
+  useEffect(() => {
+    setRoundData(gameData);
+  }, [gameData]);
 
   const sumPots = useMemo(() => {
-    if (gameData && gameData && gameData.players) {
-      const sumBets = gameData.players.reduce(
+    if (roundData && roundData && roundData.players) {
+      const sumBets = roundData.players.reduce(
         (sum: number, item: any) => sum + item.amount,
         0
       );
@@ -127,18 +143,49 @@ export default function Waiting() {
     } else {
       return 0;
     }
-  }, [gameData]);
+  }, [roundData]);
+
+  const addPlayers = (amount: number) => {
+    let tempPlayers = gameData?.players;
+
+    // Find the existing player by wallet publicKey
+    let existingPlayer = tempPlayers?.find(
+      (player) => player.player === wallet.publicKey?.toBase58()
+    );
+
+    if (existingPlayer) {
+      // If the player exists, increment their amount
+      existingPlayer.amount += amount * LAMPORTS_PER_SOL;
+    } else {
+      // If the player does not exist, add a new player
+      tempPlayers?.push({
+        player: wallet.publicKey?.toBase58() as string,
+        amount: amount * LAMPORTS_PER_SOL,
+        color: "#EBF400",
+        id: tempPlayers?.length,
+      });
+    }
+
+    setRoundData({
+      players: tempPlayers as Player[],
+      endTimestamp: 1200,
+      pda: "rektlker",
+      gameStarted: false,
+    });
+  };
 
   const handleBet = async () => {
     try {
-      if (gameData && gameData.players && gameData.players.length !== 0) {
-        await enterGame(
-          wallet,
-          new PublicKey(gameData.pda),
-          betAmount,
-          setIsBetLoading,
-          gameData.endTimestamp
-        );
+      if (roundData && roundData.players && roundData.players.length !== 0) {
+        // await enterGame(
+        //   wallet,
+        //   new PublicKey(roundData.pda),
+        //   betAmount,
+        //   setIsBetLoading,
+        //   roundData.endTimestamp
+        // );
+        setEntry(entry + betAmount);
+        addPlayers(betAmount);
       } else {
         await playGame(wallet, betAmount, setIsBetLoading);
       }
@@ -157,19 +204,19 @@ export default function Waiting() {
 
   const winPercent = useMemo(() => {
     if (
-      gameData &&
-      gameData &&
-      gameData.players &&
-      gameData.players.length === 0
+      roundData &&
+      roundData &&
+      roundData.players &&
+      roundData.players.length === 0
     ) {
       return 0;
-    } else if (gameData) {
-      const sumBets = gameData.players?.reduce(
+    } else if (roundData) {
+      const sumBets = roundData.players?.reduce(
         (sum: number, item: any) => sum + item.amount,
         0
       );
       if (wallet.publicKey !== null) {
-        const userBet = gameData.players?.find(
+        const userBet = roundData.players?.find(
           (item: any) => item.player === wallet.publicKey?.toBase58()
         );
         if (userBet) {
@@ -181,10 +228,11 @@ export default function Waiting() {
         return 0;
       }
     }
-  }, [gameData?.players, wallet.publicKey, wallet.connected]);
+  }, [roundData, wallet.publicKey, wallet.connected]);
   // @ts-ignore
   const chartOptions: Highcharts.Options = useMemo(() => {
     let user = 0;
+    // console.log("rounde===", roundData, sumPots);
     return {
       responsive: {
         rules: [
@@ -335,7 +383,7 @@ export default function Waiting() {
                     angle < currentAngle + pointAngle
                   ) {
                     //@ts-ignore
-                    user = point.id;
+                    user = point.name;
                     // console.log("Triangle is pointing at user:", user);
                     break;
                   }
@@ -352,7 +400,7 @@ export default function Waiting() {
             let text;
             let countdownText;
             let timer: any;
-            if (Number.isNaN(win)) {
+            if (!win) {
               text = `<p style="display:flex;"><img src="./Solana_logo.png" width="26" height="20" style="margin-right:10px;"/> ${sumPots} SOL</p>`;
               //@ts-ignore
               // function down() {
@@ -368,15 +416,24 @@ export default function Waiting() {
               // }
               // down();
             } else {
+              let winPlayer = this.series[0].data.find(
+                (item) => item.name === win
+              );
               let winPercent =
                 Math.round(
                   (sumPots * 10) /
                     //@ts-ignore
-                    (this.series[0].data[win].y / LAMPORTS_PER_SOL)
+                    (winPlayer.y / LAMPORTS_PER_SOL)
                 ) / 10;
-              text = `<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;position:absolute;top:-60px;right:-90px;">
+              text = `<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;position:absolute;top:-60px;right:-100px;">
               <img src="./win.png" width="100"/>
-              <p style="display:flex;font-size:16px"> ${this.series[0].data[win].name} is a ${winPercent}X winner </p></div>`;
+              <p style="display:flex;font-size:16px"> ${
+                //@ts-ignore
+                winPlayer.name.slice(0, 3)
+                //@ts-ignore
+              }...${winPlayer.name.slice(
+                -3
+              )} is a ${winPercent}X winner </p></div>`;
             }
             const style = {
               color: "#FFFFFF",
@@ -539,7 +596,7 @@ export default function Waiting() {
                 // console.log("e==", e);
                 // Custom logic for hover event
                 //@ts-ignore
-                console.log(`Hovering over: ${this.name}`);
+                // console.log(`Hovering over: ${this.name}`);
                 //@ts-ignore
                 setHover(this.id);
               },
@@ -566,15 +623,15 @@ export default function Waiting() {
           rounded: false,
         },
       },
-      colors: gameData?.players
-        ? gameData?.players.map((item) => item.color)
-        : ["#FF204E", "#F72798", "#F57D1F", "#EBF400"],
+      // colors: roundData?.players
+      //   ? roundData?.players.map((item) => item.color)
+      //   : ["#FF204E", "#F72798", "#F57D1F", "#EBF400"],
       series: [
         {
           type: "pie",
           name: "Amount",
-          data: gameData?.players
-            ? gameData?.players.map((item) => ({
+          data: roundData?.players
+            ? roundData?.players.map((item) => ({
                 name: item.player,
                 y: item.amount,
                 id: item.id,
@@ -583,6 +640,7 @@ export default function Waiting() {
                   : hovered === item.id
                   ? 1
                   : 0.2,
+                color: item.color,
               }))
             : [
                 { name: "Player 1", y: 0.5 },
@@ -602,7 +660,7 @@ export default function Waiting() {
         },
       ],
     };
-  }, [gameData?.players, start, win, hovered, time]);
+  }, [roundData?.players, start, win, hovered, time]);
   const gaugeChartOptions = {
     chart: {
       type: "solidgauge",
@@ -728,7 +786,7 @@ export default function Waiting() {
                     onHover={(id) => setHovered(id)}
                     winner={win}
                     hovered={hover}
-                    players={gameData ? gameData.players : []}
+                    players={roundData ? roundData.players : []}
                     sumPots={sumPots}
                   />
                 </Grid>
@@ -795,7 +853,7 @@ export default function Waiting() {
                       onHover={(id) => setHovered(id)}
                       winner={win}
                       hovered={hover}
-                      players={gameData ? gameData.players : []}
+                      players={roundData ? roundData.players : []}
                       sumPots={sumPots}
                     />
                     {/* </Hidden> */}
@@ -840,8 +898,9 @@ export default function Waiting() {
               <Hidden mdDown>
                 <Grid item lg={3} md={3} sm={3}>
                   <RoundInfoSide
-                    playersCount={gameData ? gameData.players.length : 0}
+                    playersCount={roundData ? roundData.players.length : 0}
                     sumPots={sumPots}
+                    entry={entry}
                     handleBet={handleBet}
                     handleBetAmount={handleBetAmount}
                     isBetLoading={isBetLoading}
@@ -893,9 +952,10 @@ export default function Waiting() {
         //   <Toolbar>
         <RoundInfoSide
           isMobile={isMobile}
-          playersCount={gameData ? gameData.players.length : 0}
+          playersCount={roundData ? roundData.players.length : 0}
           sumPots={sumPots}
           handleBet={handleBet}
+          entry={entry}
           handleBetAmount={handleBetAmount}
           isBetLoading={isBetLoading}
           winPercent={winPercent}
