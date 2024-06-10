@@ -729,6 +729,12 @@ export default function Waiting() {
         >
           <Toolbar>
             {/* <div className="flex items-center"> */}
+            <img
+              src="/leprechun.png"
+              alt="logo"
+              width={50}
+              style={{ marginRight: 6 }}
+            />
             <div className="text-2xl font-bold text-white">DEGENPOT</div>
             {/* </div> */}
             <Box flexGrow={1} />
