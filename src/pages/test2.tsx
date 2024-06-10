@@ -710,7 +710,7 @@ export default function Waiting() {
             container
             justifyContent={"center"}
             height={"90vh"}
-            px={{ xs: 2, sm: 4, md: 6 }}
+            px={{ xs: 2, sm: 4, md: 4 }}
           >
             <Grid
               container
@@ -722,7 +722,7 @@ export default function Waiting() {
               // mx={4}
               mt={4}
             >
-              {/* <Hidden lgDown>
+              <Hidden lgDown>
                 <Grid item md={3}>
                   <PlayerSide
                     onHover={(id) => setHovered(id)}
@@ -732,8 +732,8 @@ export default function Waiting() {
                     sumPots={sumPots}
                   />
                 </Grid>
-              </Hidden> */}
-              <Grid item md={9} sm={12} xs={12}>
+              </Hidden>
+              <Grid item lg={6} md={9} sm={12} xs={12}>
                 <Grid
                   container
                   flexDirection={"column"}
@@ -785,8 +785,12 @@ export default function Waiting() {
                       {/* </Grid> */}
                     </Paper>
                   </Grid>
-                  {/* <Hidden lgUp> */}
-                  <Grid item mb={isMobile ? 40 : 0}>
+                  <Grid
+                    item
+                    mb={isMobile ? 40 : 0}
+                    sx={{ display: { lg: "none" } }}
+                  >
+                    {/* <Hidden lgUp> */}
                     <PlayerSide
                       onHover={(id) => setHovered(id)}
                       winner={win}
@@ -794,9 +798,9 @@ export default function Waiting() {
                       players={gameData ? gameData.players : []}
                       sumPots={sumPots}
                     />
+                    {/* </Hidden> */}
                   </Grid>
-                  {/* </Hidden> */}
-                  {/* <Grid item height={"fit-content"}>
+                  <Grid item height={"fit-content"}>
                     <Paper className="h-full rounded-xl px-2 py-1">
                       <Grid
                         container
@@ -830,11 +834,11 @@ export default function Waiting() {
                         </div>
                       </Grid>
                     </Paper>
-                  </Grid> */}
+                  </Grid>
                 </Grid>
               </Grid>
               <Hidden mdDown>
-                <Grid item md={3} sm={3}>
+                <Grid item lg={3} md={3} sm={3}>
                   <RoundInfoSide
                     playersCount={gameData ? gameData.players.length : 0}
                     sumPots={sumPots}
