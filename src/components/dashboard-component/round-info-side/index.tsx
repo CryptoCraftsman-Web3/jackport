@@ -81,89 +81,95 @@ const RoundInfoSide = ({
             container
             justifyContent={"space-between"}
             alignItems={"center"}
+            spacing={1}
+            mt={1}
           >
-            <div className="bg-[#202329] p-4 rounded-lg w-[180px]">
-              <div className="flex items-center justify-between">
-                <div className="text-sm">Prize Pool</div>
-                <div className="text-sm">{sumPots}</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-sm">Players</div>
-                <div className="text-sm">{playersCount}/100</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-sm">Your Entries</div>
-                <div className="text-sm">{entry} sol</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-sm">Your Win Chance</div>
-                <div className="text-sm">
-                  {winPercent ? Math.round(winPercent * 10000) / 100 : 0}
+            <Grid item xs={6} sm={5}>
+              <div className="bg-[#202329] p-1 rounded-lg w-full">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">Prize Pool</div>
+                  <div className="text-sm">{sumPots}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">Players</div>
+                  <div className="text-sm">{playersCount}/100</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">Your Entries</div>
+                  <div className="text-sm">{entry} sol</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">Your Win Chance</div>
+                  <div className="text-sm">
+                    {winPercent ? Math.round(winPercent * 10000) / 100 : 0}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-white p-4 rounded-md">
-              <div className="rounded-md p-4">
-                {wallet.publicKey ? (
-                  <div>
-                    <div className="relative mb-4">
-                      <input
-                        className="bg-stone-950 text-sm py-1 px-3 w-full border-2 border-zinc-800 rounded-md text-gray-200"
-                        placeholder="Amount of SOL"
-                        type="number"
-                        value={betAmount}
-                        step={0.1}
-                        onChange={(e) =>
-                          handleBetAmount(e.target.value as unknown as number)
-                        }
-                      />
-                    </div>
+            </Grid>
+            <Grid item xs={6} sm={5}>
+              <div className="text-white p-0 rounded-md">
+                <div className="rounded-md p-0">
+                  {wallet.publicKey ? (
+                    <div>
+                      <div className="relative mb-4">
+                        <input
+                          className="bg-stone-950 text-sm py-1 px-3 w-full border-2 border-zinc-800 rounded-md text-gray-200"
+                          placeholder="Amount of SOL"
+                          type="number"
+                          value={betAmount}
+                          step={0.1}
+                          onChange={(e) =>
+                            handleBetAmount(e.target.value as unknown as number)
+                          }
+                        />
+                      </div>
 
-                    <div className="flex gap-1 mb-4">
-                      <div
-                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
-                        onClick={() => {
-                          handleBetAmount(0.1);
-                        }}
-                      >
-                        0.1 SOL
+                      <div className="flex mb-4">
+                        <div
+                          className="bg-[#202329] py-1 px-1 flex rounded-md cursor-pointer"
+                          onClick={() => {
+                            handleBetAmount(0.1);
+                          }}
+                        >
+                          0.1 SOL
+                        </div>
+                        <div
+                          className="bg-[#202329] py-1 px-1 flex rounded-md cursor-pointer"
+                          onClick={() => {
+                            handleBetAmount(0.5);
+                          }}
+                        >
+                          0.5 SOL
+                        </div>
+                        <div
+                          className="bg-[#202329] py-1 px-1 flex rounded-md cursor-pointer"
+                          onClick={() => {
+                            handleBetAmount(5);
+                          }}
+                        >
+                          5 SOL
+                        </div>
                       </div>
-                      <div
-                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
-                        onClick={() => {
-                          handleBetAmount(0.5);
-                        }}
+                      <button
+                        className="bg-[#7e18ff] text-sm font-medium py-2 px-4 w-full rounded-md text-white"
+                        onClick={handleBet}
+                        disabled={isBetLoading}
                       >
-                        0.5 SOL
-                      </div>
-                      <div
-                        className="bg-[#202329] py-1 px-3 flex rounded-md cursor-pointer"
-                        onClick={() => {
-                          handleBetAmount(5);
-                        }}
-                      >
-                        5 SOL
-                      </div>
+                        {isBetLoading ? (
+                          <>Waiting...</>
+                        ) : (
+                          <>Add {betAmount} SOL to bet</>
+                        )}
+                      </button>
                     </div>
-                    <button
-                      className="bg-[#7e18ff] text-sm font-medium py-2 px-4 w-full rounded-md text-white"
-                      onClick={handleBet}
-                      disabled={isBetLoading}
-                    >
-                      {isBetLoading ? (
-                        <>Waiting...</>
-                      ) : (
-                        <>Add {betAmount} SOL to bet</>
-                      )}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="playground">
-                    <WalletMultiButton />
-                  </div>
-                )}
+                  ) : (
+                    <div className="playground">
+                      <WalletMultiButton />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </Grid>
           </Grid>
         </>
       ) : (
