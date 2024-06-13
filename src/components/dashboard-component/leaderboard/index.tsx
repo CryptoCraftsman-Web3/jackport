@@ -73,7 +73,7 @@ const Leaderboard = (props: Props) => {
       </Grid>
       <Grid container mt={2} flexDirection={"column"}>
         {users.map((item, index) => (
-          <UserItem {...item} />
+          <UserItem {...item} key={index} />
         ))}
       </Grid>
     </Root>
