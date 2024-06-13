@@ -27,3 +27,8 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {}
+
+export interface ILeaderBoardUser {
+  name: string;
+  amount: number;
+}

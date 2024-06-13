@@ -36,6 +36,7 @@ import {
 import PlayerSide from "@/components/dashboard-component/players-side";
 import RoundInfoSide from "@/components/dashboard-component/round-info-side";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Leaderboard from "@/components/dashboard-component/leaderboard";
 
 if (typeof Highcharts === "object") {
   require("highcharts/highcharts-more")(Highcharts);
@@ -902,17 +903,24 @@ export default function Waiting() {
                 </Grid>
               </Grid>
               <Hidden mdDown>
-                <Grid item lg={3} md={3} sm={3}>
-                  <RoundInfoSide
-                    playersCount={roundData ? roundData.players.length : 0}
-                    sumPots={sumPots}
-                    entry={entry}
-                    handleBet={handleBet}
-                    handleBetAmount={handleBetAmount}
-                    isBetLoading={isBetLoading}
-                    winPercent={winPercent}
-                    betAmount={betAmount}
-                  />
+                <Grid item lg={3} md={3} sm={3} alignItems={"stretch"}>
+                  <Grid container flexDirection={"column"} spacing={1}>
+                    <Grid item>
+                      <RoundInfoSide
+                        playersCount={roundData ? roundData.players.length : 0}
+                        sumPots={sumPots}
+                        entry={entry}
+                        handleBet={handleBet}
+                        handleBetAmount={handleBetAmount}
+                        isBetLoading={isBetLoading}
+                        winPercent={winPercent}
+                        betAmount={betAmount}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Leaderboard />
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Hidden>
             </Grid>
